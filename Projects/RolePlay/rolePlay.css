@@ -37,3 +37,24 @@ button{
     background-image: linear-gradient(#fecc4c, #ffac33);
     border:3px solid #feac32;
 }
+
+.content {
+    flex: 1; /* This will take up the remaining space */
+}
+
+.back-button {
+    position: fixed; /* Stays in the same place when scrolling */
+    right: 20px; /* Distance from the right edge */
+    bottom: 20px; /* Distance from the bottom edge */
+    padding: 10px 20px;
+    background-color: #007bff; /* Button background color */
+    color: white; /* Button text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.back-button:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
