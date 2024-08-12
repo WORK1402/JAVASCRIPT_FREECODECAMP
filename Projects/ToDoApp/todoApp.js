@@ -119,7 +119,6 @@ taskForm.addEventListener("submit", (e) => {
 });
 
 document.getElementById('backButton').addEventListener('click', function() {
-    console.log('Back button clicked');
     window.history.back();
 });
 
