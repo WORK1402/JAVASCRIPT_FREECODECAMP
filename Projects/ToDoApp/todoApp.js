@@ -117,4 +117,9 @@ taskForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   addOrUpdateTask();
+}
+
+ document.getElementById('backButton').addEventListener('click', function() {
+    // If you want to go back in the history stack
+    window.history.back();
 });
