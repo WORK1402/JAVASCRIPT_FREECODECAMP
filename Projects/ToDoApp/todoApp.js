@@ -115,11 +115,11 @@ discardBtn.addEventListener("click", () => {
 
 taskForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
   addOrUpdateTask();
-}
+});
 
- document.getElementById('backButton').addEventListener('click', function() {
-    // If you want to go back in the history stack
+document.getElementById('backButton').addEventListener('click', function() {
+    console.log('Back button clicked');
     window.history.back();
 });
+
