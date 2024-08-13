@@ -10,7 +10,11 @@
   --light-grey: #f5f6f7;
   --dark-blue: #1b1b32;
   --orange: #f1be32;
+  --yellow: #f1be32;
+  --golden-yellow: #feac32;
 }
+
+
 
 body {
   background-color: var(--dark-blue);
@@ -42,36 +46,64 @@ h1 {
   background-color: var(--orange);
   cursor: pointer;
   border: none;
-  padding: 4px;
+  padding: 8px 15px;
+  color: var(--dark-blue);
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.convert-btn:hover {
+  background-color: #d4a226;
 }
 
 .number-input {
-  height: 25px;
+  height: 30px;
+  width: 100px;
+  text-align: center;
+  border: 2px solid var(--orange);
+  border-radius: 5px;
+  padding: 5px;
 }
 
 #result {
-  margin: 10px 0;
-  min-width: 200px;
+  margin: 20px 0;
+  min-width: 250px;
   width: fit-content;
-  min-height: 80px;
+  min-height: 100px;
   word-break: break-word;
-  padding: 15px;
+  padding: 20px;
   border: 5px solid var(--orange);
   font-size: 2rem;
   text-align: center;
+  border-radius: 10px;
 }
 
 #animation-container {
+  
   margin: auto;
-  max-width: 300px;
+  width:50%;
+  max-width: 500px;
+  min-height: 600px;
+  position: relative;
 }
-
 .animation-frame {
-  margin: 250px auto 0;
-  padding: 15px 10px;
+  padding: 15px;
   border: 5px solid var(--orange);
   font-size: 1.2rem;
   text-align: center;
+  width: 80%; 
+  max-width: 400px; 
+  background-color: var(--dark-blue);
+  color: var(--light-grey);
+  border-radius: 10px;
+  margin: 5px 0; /* Reduced margin to decrease gaps between boxes */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  white-space: normal; /* Allow text wrapping */
+  overflow-wrap: break-word; /* Break long words */
+  word-break: break-word; /* Force breaking if necessary */
 }
 
 @media screen and (min-width: 500px) {
@@ -82,4 +114,21 @@ h1 {
   #result {
     max-width: 460px;
   }
+
+  #animation-container {
+    max-width: 500px;
+  }
+}
+
+
+.back-button {
+  position: fixed; /* Stays in the same place when scrolling */
+  right: 20px; /* Distance from the right edge */
+  bottom: 20px; /* Distance from the bottom edge */
+  padding: 10px 20px;
+  background-color:var(--golden-yellow); /* Button background color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
