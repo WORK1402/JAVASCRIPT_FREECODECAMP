@@ -24,3 +24,7 @@ checkMessageButton.addEventListener("click", () => {
     : "This message does not seem to contain any spam.";
   messageInput.value = "";
 });
+ document.getElementById('backButton').addEventListener('click', function() {
+    // If you want to go back in the history stack
+    window.history.back();
+ });
