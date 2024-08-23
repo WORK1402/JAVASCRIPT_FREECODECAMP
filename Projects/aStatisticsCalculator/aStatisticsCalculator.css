@@ -4,7 +4,12 @@ body {
   text-align: center;
   color: #fff;
 }
-
+:root {
+  --yellow: #f1be32;
+  --golden-yellow: #feac32;
+  --dark-purple: #110815;
+  --light-grey: #efefef;
+}
 button {
   cursor: pointer;
   background-color: rgb(59, 59, 79);
