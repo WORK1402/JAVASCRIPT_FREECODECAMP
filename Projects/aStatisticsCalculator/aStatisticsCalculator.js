@@ -65,7 +65,8 @@ const calculate = () => {
   document.querySelector("#variance").textContent = variance;
   document.querySelector("#standardDeviation").textContent = standardDeviation;
 }
-document.getElementById('backButton').addEventListener('click', function() {
-    // If you want to go back in the history stack
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('backButton').addEventListener('click', function() {
     window.history.back();
- });
+  });
+});
