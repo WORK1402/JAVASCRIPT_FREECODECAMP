@@ -152,3 +152,6 @@ button:focus-visible {
 .back-button:hover {
   background-color: #0056b3; /* Darker shade for hover effect */
 }
+.footer {
+  margin-top: 10px;
+}
