@@ -193,8 +193,6 @@ h1 {
   cursor: pointer;
   font-size: 16px;
 }
-
-.back-button:hover {
   background-color: :root {
     /* colors */
     --primary-color: #dfdfe2;
