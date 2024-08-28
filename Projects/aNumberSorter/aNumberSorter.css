@@ -137,6 +137,7 @@ button:focus-visible {
     max-width: 420px;
   }
 }
+
 .back-button {
   position: fixed; /* Stays in the same place when scrolling */
   right: 20px; /* Distance from the right edge */
@@ -152,8 +153,9 @@ button:focus-visible {
 }
 
 .back-button:hover {
-  background-color:#ffffff; /* Darker shade for hover effect */
+  background-color: var(--gray-00); /* Hover background color */
 }
+
 .footer {
   margin-top: 10px;
 }
