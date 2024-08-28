@@ -1,3 +1,10 @@
+:root {
+  --light-grey: #f5f6f7;
+  --dark-blue: #1b1b32;
+  --orange: #f1be32;
+  --yellow: #f1be32;
+  --golden-yellow: #feac32;
+}
 #container {
   display: grid;
   grid-template-columns: 50px repeat(10, 200px);
