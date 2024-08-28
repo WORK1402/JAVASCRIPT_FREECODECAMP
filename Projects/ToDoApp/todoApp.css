@@ -193,6 +193,7 @@ h1 {
   cursor: pointer;
   font-size: 16px;
 }
+.back-button:hover {
   background-color: :root {
     /* colors */
     --primary-color: #dfdfe2;
@@ -216,6 +217,7 @@ h1 {
   *::before {
     box-sizing: border-box;
   }
+}
   
   body {
     background-color: var(--app-background-color);
@@ -562,18 +564,3 @@ h1 {
       text-align: center;
     }
   }
-
-  .back-button {
-    position: fixed; /* Stays in the same place when scrolling */
-    right: 20px; /* Distance from the right edge */
-    bottom: 20px; /* Distance from the bottom edge */
-    padding: 10px 20px;
-    background-color: #feac32; /* Button background color */
-    border:  none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-.back-button:hover {
-  background-color: var(--white); /* Background color on hover */
-}
