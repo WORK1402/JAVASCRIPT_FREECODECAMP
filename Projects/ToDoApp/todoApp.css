@@ -576,6 +576,6 @@ h1 {
     cursor: pointer;
     font-size: 16px;
 }
-  .back-button:hover {
+.back-button:hover {
   background-color: var(--white); /* Background color on hover */
 }
