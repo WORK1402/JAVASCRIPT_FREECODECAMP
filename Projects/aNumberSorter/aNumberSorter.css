@@ -9,7 +9,6 @@
   --error: #a94442;
   --danger-color: #850000;
   --danger-background: #ffadad;
-  --white:#ffffff;
 }
 
 *,
@@ -153,7 +152,7 @@ button:focus-visible {
 }
 
 .back-button:hover {
-  background-color: var(--white); /* Darker shade for hover effect */
+  background-color:#ffffff; /* Darker shade for hover effect */
 }
 .footer {
   margin-top: 10px;
