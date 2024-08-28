@@ -132,3 +132,6 @@ h1 {
   cursor: pointer;
   font-size: 16px;
 }
+.back-button:hover {
+  background-color: #ffffff; /* Darker shade for hover effect */
+}
