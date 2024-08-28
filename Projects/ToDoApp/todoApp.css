@@ -577,5 +577,5 @@ h1 {
     font-size: 16px;
 }
   .back-button:hover {
-  background-color: #ffffff; /* Darker shade for hover effect */
+  background-color: var(--white); /* Background color on hover */
 }
