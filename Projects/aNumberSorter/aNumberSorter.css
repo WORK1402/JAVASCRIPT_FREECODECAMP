@@ -9,6 +9,7 @@
   --error: #a94442;
   --danger-color: #850000;
   --danger-background: #ffadad;
+   --golden-yellow: #feac32;
 }
 
 *,
@@ -143,15 +144,12 @@ button:focus-visible {
   right: 20px; /* Distance from the right edge */
   bottom: 20px; /* Distance from the bottom edge */
   padding: 10px 20px;
-  background-color: var(--blue-50); /* Button background color */
+  background-color:var(--golden-yellow); /* Button background color */
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  width: auto; /* Ensures button doesn't take full width */
-  max-width: 150px; /* Optional: sets a maximum width */
 }
-
 .back-button:hover {
   background-color: var(--gray-00); /* Hover background color */
 }
