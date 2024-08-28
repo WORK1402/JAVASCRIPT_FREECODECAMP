@@ -99,3 +99,8 @@ const update = event => {
     element.value = evalFormula(value.slice(1), Array.from(document.getElementById("container").children));
   }
 }
+
+ document.getElementById('backButton').addEventListener('click', function() {
+    // If you want to go back in the history stack
+    window.history.back();
+ });
