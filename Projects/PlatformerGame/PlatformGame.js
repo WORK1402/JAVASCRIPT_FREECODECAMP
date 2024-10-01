@@ -224,9 +224,15 @@ const animate = () => {
       } else if (player.position.x >= checkpoint.position.x && player.position.x <= checkpoint.position.x + 40) {
         showCheckpointScreen("You reached a checkpoint!");
       }
-    } else if (/* collision with huddle (add your logic) */) {
-      stopGame(); // Stop the game on collision
-    }
+    } 
+    else if (
+  player.position.x < checkpoint.position.x + checkpoint.width && // Player's right side is left of the huddle's right side
+  player.position.x + player.width > checkpoint.position.x && // Player's left side is right of the huddle's left side
+  player.position.y < checkpoint.position.y + checkpoint.height && // Player's bottom is above the huddle's bottom
+  player.position.y + player.height > checkpoint.position.y // Player's top is below the huddle's top
+) {
+  stopGame(); // Stop the game on collision
+}
   });
 };
 
