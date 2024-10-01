@@ -8,8 +8,17 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 const gravity = 0.5;
 let isCheckpointCollisionDetectionActive = true;
-let score = 0; // Initialize score
+let gameOver = false;
+let animateId;
 
+let score = 0;
+const scoreDisplay = document.createElement('div');
+scoreDisplay.style.position = 'absolute';
+scoreDisplay.style.top = '10px';
+scoreDisplay.style.left = '10px';
+scoreDisplay.style.color = '#fff';
+scoreDisplay.style.fontSize = '24px';
+document.body.appendChild(scoreDisplay);
 const proportionalSize = (size) => {
   return innerHeight < 500 ? Math.ceil((size / 500) * innerHeight) : size;
 }
@@ -31,7 +40,6 @@ class Player {
     ctx.fillStyle = "#99c9ff";
     ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
   }
-  
   update() {
     this.draw();
     this.position.x += this.velocity.x;
@@ -98,18 +106,22 @@ class CheckPoint {
 const player = new Player();
 
 const platformPositions = [
-  { x: 500, y: proportionalSize(450) },
-  { x: 700, y: proportionalSize(400) },
-  { x: 850, y: proportionalSize(350) },
-  { x: 900, y: proportionalSize(350) },
-  { x: 1050, y: proportionalSize(150) },
-  { x: 2500, y: proportionalSize(450) },
-  { x: 2900, y: proportionalSize(400) },
-  { x: 3150, y: proportionalSize(350) },
-  { x: 3900, y: proportionalSize(450) },
-  { x: 4200, y: proportionalSize(400) },
-  { x: 4400, y: proportionalSize(200) },
-  { x: 4700, y: proportionalSize(150) },
+  { x: 500, y: proportionalSize(450) },  // Platform 1
+  { x: 700, y: proportionalSize(400) },  // Platform 2
+  { x: 850, y: proportionalSize(350) },  // Platform 3
+  { x: 1400, y: proportionalSize(300) },  // Platform 4
+  { x: 1800, y: proportionalSize(400) }, // Platform 5
+  { x: 2100, y: proportionalSize(450) }, // Platform 6
+  { x: 2900, y: proportionalSize(400) }, // Platform 7
+  { x: 3350, y: proportionalSize(400) }, // Platform 8
+  { x: 3900, y: proportionalSize(450) }, // Platform 9
+  { x: 4200, y: proportionalSize(400) }, // Platform 10
+  { x: 4400, y: proportionalSize(200) }, // Platform 11
+  { x: 4700, y: proportionalSize(150) }, // Platform 12
+  { x: 5200, y: proportionalSize(300) }, // Platform 13
+  { x: 5500, y: proportionalSize(250) }, // Platform 14
+  { x: 5800, y: proportionalSize(350) }, // Platform 15
+  { x: 6000, y: proportionalSize(150) }, // Platform 16
 ];
 
 const platforms = platformPositions.map(
@@ -117,51 +129,30 @@ const platforms = platformPositions.map(
 );
 
 const checkpointPositions = [
-  { x: 1170, y: proportionalSize(80), z: 1 },
-  { x: 2900, y: proportionalSize(330), z: 2 },
-  { x: 4800, y: proportionalSize(80), z: 3 },
+  { x: 1000, y: proportionalSize(270), z: 1 },   // Above Platform 1
+  { x: 2000, y: proportionalSize(320), z: 2 },   // Above Platform 2
+  { x: 2900, y: proportionalSize(300), z: 3 },   // Above Platform 3
+  { x: 3500, y: proportionalSize(200), z: 4 },   // Above Platform 4
+  { x: 4000, y: proportionalSize(150), z: 5 },   // Above Platform 5
+  { x: 4800, y: proportionalSize(80), z: 6 },   // Above Platform 6
+  { x: 5500, y: proportionalSize(150), z: 7 },   // Above Platform 7
+  { x: 5700, y: proportionalSize(180), z: 8 },   // Above Platform 8
+  { x: 5800, y: proportionalSize(270), z: 9 },   // Above Platform 9
+  { x: 5900, y: proportionalSize(120), z: 10 },  // Above Platform 10
 ];
 
 const checkpoints = checkpointPositions.map(
   (checkpoint) => new CheckPoint(checkpoint.x, checkpoint.y, checkpoint.z)
 );
-
-// Display score function
-const displayScore = () => {
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(`Score: ${score}`, 20, 50); // Adjust position as needed
-};
-
-// Stop game and display total score
-const stopGame = () => {
-  cancelAnimationFrame(animate); // Stop the animation loop
-  checkpointScreen.style.display = "block";
-  checkpointMessage.textContent = `Game Over! Your total score is: ${score}`;
-};
-
-// Respawn huddles (checkpoints) infinitely
-const respawnHuddles = () => {
-  checkpoints.forEach(checkpoint => {
-    if (checkpoint.position.x + checkpoint.width < 0) {
-      checkpoint.position.x = canvas.width + Math.random() * 500; // Reset huddle ahead of player
-      checkpoint.claimed = false; // Allow re-claiming
-    }
-  });
-};
-
 const animate = () => {
-  requestAnimationFrame(animate);
+  if (gameOver) return;
+  animateId = requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   platforms.forEach((platform) => platform.draw());
   checkpoints.forEach((checkpoint) => checkpoint.draw());
-
   player.update();
-  respawnHuddles(); // Respawn huddles
-  displayScore(); // Display the score
-
-  if (keys.rightKey.pressed && player.position.x < proportionalSize(400)) {
+   if (keys.rightKey.pressed && player.position.x < proportionalSize(400)) {
     player.velocity.x = 5;
   } else if (keys.leftKey.pressed && player.position.x > proportionalSize(100)) {
     player.velocity.x = -5;
@@ -188,9 +179,12 @@ const animate = () => {
     }
   }
 
+  let playerCollidedWithPlatform = false; // Flag to check collision
+
+
   platforms.forEach((platform) => {
     const collisionDetectionRules = [
-      player.position.y + player.height <= platform.position.y,
+      player.position.y + player.height <= platform.position.y, // Above platform
       player.position.y + player.height + player.velocity.y >= platform.position.y,
       player.position.x >= platform.position.x - player.width / 2,
       player.position.x <= platform.position.x + platform.width - player.width / 3,
@@ -198,7 +192,19 @@ const animate = () => {
 
     if (collisionDetectionRules.every((rule) => rule)) {
       player.velocity.y = 0;
+      player.position.y = platform.position.y - player.height;
       return;
+    }
+
+    const platformDetectionRules = [
+      player.position.x >= platform.position.x - player.width / 2,
+      player.position.x <= platform.position.x + platform.width - player.width / 3,
+      player.position.y + player.height >= platform.position.y,
+      player.position.y <= platform.position.y + platform.height,
+    ];
+
+    if (platformDetectionRules.every(rule => rule)) {
+      stopGame("You hit the platform! Please start again.");
     }
   });
 
@@ -206,44 +212,33 @@ const animate = () => {
     const checkpointDetectionRules = [
       player.position.x >= checkpoint.position.x,
       player.position.y >= checkpoint.position.y,
-      player.position.y + player.height <= checkpoint.position.y + checkpoint.height,
+      player.position.y + player.height <=
+        checkpoint.position.y + checkpoint.height,
       isCheckpointCollisionDetectionActive,
-      player.position.x - player.width <= checkpoint.position.x - checkpoint.width + player.width * 0.9,
+      player.position.x - player.width <=
+        checkpoint.position.x - checkpoint.width + player.width * 0.9,
       index === 0 || checkpoints[index - 1].claimed === true,
     ];
 
     if (checkpointDetectionRules.every((rule) => rule)) {
       checkpoint.claim();
-      score += 100; // Increment score when a checkpoint is passed
+      score += 100;
+      scoreDisplay.textContent = `Score: ${score}`;
 
       if (index === checkpoints.length - 1) {
         isCheckpointCollisionDetectionActive = false;
-        showCheckpointScreen("You reached the final checkpoint!");
-        movePlayer("ArrowRight", 0, false);
-        stopGame(); // Stop game if final checkpoint is reached
-      } else if (player.position.x >= checkpoint.position.x && player.position.x <= checkpoint.position.x + 40) {
+        stopGame("You reached the final checkpoint!");
+      } else if (player.position.x >= checkpoint.position.x &&
+        player.position.x <= checkpoint.position.x + 40) {
         showCheckpointScreen("You reached a checkpoint!");
       }
-    } 
-    else if (
-  player.position.x < checkpoint.position.x + checkpoint.width && // Player's right side is left of the huddle's right side
-  player.position.x + player.width > checkpoint.position.x && // Player's left side is right of the huddle's left side
-  player.position.y < checkpoint.position.y + checkpoint.height && // Player's bottom is above the huddle's bottom
-  player.position.y + player.height > checkpoint.position.y // Player's top is below the huddle's top
-) {
-  stopGame(); // Stop the game on collision
-}
+    }
   });
 };
 
 const keys = {
-  rightKey: {
-    pressed: false
-  },
-  leftKey: {
-    pressed: false
-  }
-};
+  rightKey: { pressed: false },
+  leftKey: { pressed: false }};
 
 const movePlayer = (key, xVelocity, isPressed) => {
   if (!isCheckpointCollisionDetectionActive) {
@@ -255,9 +250,6 @@ const movePlayer = (key, xVelocity, isPressed) => {
   switch (key) {
     case "ArrowLeft":
       keys.leftKey.pressed = isPressed;
-      if (xVelocity === 0) {
-        player.velocity.x = xVelocity;
-      }
       player.velocity.x -= xVelocity;
       break;
     case "ArrowUp":
@@ -274,26 +266,70 @@ const movePlayer = (key, xVelocity, isPressed) => {
   }
 }
 
+// const stopGame = (msg) => {
+//   gameOver = true;
+//   ctx.clearRect(0, 0, canvas.width, canvas.height);
+//   ctx.fillStyle = "#fff";
+//   ctx.font = "36px Arial";
+//   ctx.fillText(msg, canvas.width / 2 - 200, canvas.height / 2);
+//   cancelAnimationFrame(animateId);
+// };
+const stopGame = (msg) => {
+  gameOver = true;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Display the message
+  ctx.fillStyle = "#fff";
+  ctx.font = "36px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(msg, canvas.width / 2, canvas.height / 2 - 50);
+
+  // Display the total score
+  ctx.font = "28px Arial";
+  ctx.fillText(`Total Score: ${score}`, canvas.width / 2, canvas.height / 2);
+
+  const restartBtnContainer = document.createElement('div');
+  restartBtnContainer.classList.add('btn-container'); // Reuse the btn-container class
+
+  // Create the restart button
+  const restartButton = document.createElement('button');
+  restartButton.textContent = "Restart";
+  restartButton.classList.add('btn'); // Reuse the btn class
+// Set positioning to make sure it appears correctly
+restartBtnContainer.style.position = 'absolute';
+ restartBtnContainer.style.top = `${canvas.height/2 + 50}px`;
+ restartBtnContainer.style.left = `${canvas.width/2 - 100}px`;
+ //restartBtnContainer.style.transform = 'translateX(50%)';
+  // Add the restart button to the container
+  restartBtnContainer.appendChild(restartButton);
+
+  // Add the button container to the document body
+  document.body.appendChild(restartBtnContainer);
+  // Event listener to restart the game when the button is clicked
+  // Event listener to restart the game when the button is clicked
+  restartButton.addEventListener('click', () => {
+    document.body.removeChild(restartBtnContainer); // Remove the button container
+    window.location.reload(); // Reload the game
+  });
+
+  cancelAnimationFrame(animateId);
+};
+
 const startGame = () => {
   canvas.style.display = "block";
   startScreen.style.display = "none";
+  gameOver = false;
   animate();
 };
 
 const showCheckpointScreen = (msg) => {
   checkpointScreen.style.display = "block";
-  checkpointMessage.textContent = msg;
+  checkpointMessage.textContent = `${msg} Final Score: ${score}`;
   if (isCheckpointCollisionDetectionActive) {
     setTimeout(() => (checkpointScreen.style.display = "none"), 2000);
   }
 };
 
 startBtn.addEventListener("click", startGame);
-
-addEventListener("keydown", ({ key }) => {
-  movePlayer(key, 0, true);
-});
-
-addEventListener("keyup", ({ key }) => {
-  movePlayer(key, 0, false);
-});
+window.addEventListener("keydown", ({ key }) => movePlayer(key, 8, true));
+window.addEventListener("keyup", ({ key }) => movePlayer(key, 0, false));
