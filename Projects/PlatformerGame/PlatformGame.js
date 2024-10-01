@@ -8,6 +8,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 const gravity = 0.5;
 let isCheckpointCollisionDetectionActive = true;
+let score = 0; // Initialize score
 
 const proportionalSize = (size) => {
   return innerHeight < 500 ? Math.ceil((size / 500) * innerHeight) : size;
@@ -125,19 +126,40 @@ const checkpoints = checkpointPositions.map(
   (checkpoint) => new CheckPoint(checkpoint.x, checkpoint.y, checkpoint.z)
 );
 
+// Display score function
+const displayScore = () => {
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(`Score: ${score}`, 20, 50); // Adjust position as needed
+};
+
+// Stop game and display total score
+const stopGame = () => {
+  cancelAnimationFrame(animate); // Stop the animation loop
+  checkpointScreen.style.display = "block";
+  checkpointMessage.textContent = `Game Over! Your total score is: ${score}`;
+};
+
+// Respawn huddles (checkpoints) infinitely
+const respawnHuddles = () => {
+  checkpoints.forEach(checkpoint => {
+    if (checkpoint.position.x + checkpoint.width < 0) {
+      checkpoint.position.x = canvas.width + Math.random() * 500; // Reset huddle ahead of player
+      checkpoint.claimed = false; // Allow re-claiming
+    }
+  });
+};
+
 const animate = () => {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  platforms.forEach((platform) => {
-    platform.draw();
-  });
-
-  checkpoints.forEach(checkpoint => {
-    checkpoint.draw();
-  });
+  platforms.forEach((platform) => platform.draw());
+  checkpoints.forEach((checkpoint) => checkpoint.draw());
 
   player.update();
+  respawnHuddles(); // Respawn huddles
+  displayScore(); // Display the score
 
   if (keys.rightKey.pressed && player.position.x < proportionalSize(400)) {
     player.velocity.x = 5;
@@ -171,58 +193,42 @@ const animate = () => {
       player.position.y + player.height <= platform.position.y,
       player.position.y + player.height + player.velocity.y >= platform.position.y,
       player.position.x >= platform.position.x - player.width / 2,
-      player.position.x <=
-        platform.position.x + platform.width - player.width / 3,
+      player.position.x <= platform.position.x + platform.width - player.width / 3,
     ];
 
     if (collisionDetectionRules.every((rule) => rule)) {
       player.velocity.y = 0;
       return;
     }
-
-    const platformDetectionRules = [
-      player.position.x >= platform.position.x - player.width / 2,
-      player.position.x <=
-        platform.position.x + platform.width - player.width / 3,
-      player.position.y + player.height >= platform.position.y,
-      player.position.y <= platform.position.y + platform.height,
-    ];
-
-    if (platformDetectionRules.every(rule => rule)) {
-      player.position.y = platform.position.y + player.height;
-      player.velocity.y = gravity;
-    };
   });
 
   checkpoints.forEach((checkpoint, index, checkpoints) => {
     const checkpointDetectionRules = [
       player.position.x >= checkpoint.position.x,
       player.position.y >= checkpoint.position.y,
-      player.position.y + player.height <=
-        checkpoint.position.y + checkpoint.height,
+      player.position.y + player.height <= checkpoint.position.y + checkpoint.height,
       isCheckpointCollisionDetectionActive,
-      player.position.x - player.width <=
-        checkpoint.position.x - checkpoint.width + player.width * 0.9,
+      player.position.x - player.width <= checkpoint.position.x - checkpoint.width + player.width * 0.9,
       index === 0 || checkpoints[index - 1].claimed === true,
     ];
 
     if (checkpointDetectionRules.every((rule) => rule)) {
       checkpoint.claim();
-
+      score += 100; // Increment score when a checkpoint is passed
 
       if (index === checkpoints.length - 1) {
         isCheckpointCollisionDetectionActive = false;
         showCheckpointScreen("You reached the final checkpoint!");
         movePlayer("ArrowRight", 0, false);
+        stopGame(); // Stop game if final checkpoint is reached
+      } else if (player.position.x >= checkpoint.position.x && player.position.x <= checkpoint.position.x + 40) {
+        showCheckpointScreen("You reached a checkpoint!");
       }
-else if(player.position.x >=checkpoint.position.x && player.position.x<=checkpoint.position.x + 40){
-showCheckpointScreen("You reached a checkpoint!")
-}
-
-    };
+    } else if (/* collision with huddle (add your logic) */) {
+      stopGame(); // Stop the game on collision
+    }
   });
-}
-
+};
 
 const keys = {
   rightKey: {
@@ -266,7 +272,7 @@ const startGame = () => {
   canvas.style.display = "block";
   startScreen.style.display = "none";
   animate();
-}
+};
 
 const showCheckpointScreen = (msg) => {
   checkpointScreen.style.display = "block";
@@ -278,10 +284,10 @@ const showCheckpointScreen = (msg) => {
 
 startBtn.addEventListener("click", startGame);
 
-window.addEventListener("keydown", ({ key }) => {
-  movePlayer(key, 8, true);
+addEventListener("keydown", ({ key }) => {
+  movePlayer(key, 0, true);
 });
 
-window.addEventListener("keyup", ({ key }) => {
+addEventListener("keyup", ({ key }) => {
   movePlayer(key, 0, false);
 });
